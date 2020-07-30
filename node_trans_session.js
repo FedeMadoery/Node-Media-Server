@@ -35,7 +35,7 @@ class NodeTransSession extends EventEmitter {
     }
     if (this.conf.mp4) {
       this.conf.mp4Flags = this.conf.mp4Flags ? this.conf.mp4Flags : '';
-      let mp4FileName = dateFormat('yyyy-mm-dd-HH-MM-ss') + '.mp4';
+      let mp4FileName = this.conf.args.fileName + '.mp4';
       let mapMp4 = `${this.conf.mp4Flags}${ouPath}/${mp4FileName}|`;
       mapStr += mapMp4;
       Logger.log('[Transmuxing MP4] ' + this.conf.streamPath + ' to ' + ouPath + '/' + mp4FileName);
@@ -61,18 +61,18 @@ class NodeTransSession extends EventEmitter {
     Array.prototype.push.apply(argv, ['-c:a', ac]);
     Array.prototype.push.apply(argv, this.conf.acParam);
     Array.prototype.push.apply(argv, ['-f', 'tee', '-map', '0:a?', '-map', '0:v?', mapStr]);
-    argv = argv.filter((n) => { return n }); //去空
+    argv = argv.filter((n) => { return n }); //Go empty
     this.ffmpeg_exec = spawn(this.conf.ffmpeg, argv);
     this.ffmpeg_exec.on('error', (e) => {
       Logger.ffdebug(e);
     });
 
     this.ffmpeg_exec.stdout.on('data', (data) => {
-      Logger.ffdebug(`FF输出：${data}`);
+      Logger.ffdebug(`FF output: ${data}`);
     });
 
     this.ffmpeg_exec.stderr.on('data', (data) => {
-      Logger.ffdebug(`FF输出：${data}`);
+      Logger.ffdebug(`FF output error: ${data}`);
     });
 
     this.ffmpeg_exec.on('close', (code) => {
@@ -95,7 +95,7 @@ class NodeTransSession extends EventEmitter {
   }
 
   end() {
-    this.ffmpeg_exec.kill();
+    this.ffmpeg_exec.stdin.write('q');
   }
 }
 

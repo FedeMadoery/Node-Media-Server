@@ -1,6 +1,13 @@
 const NodeMediaServer = require('./');
 
 const config = {
+  /**
+   0 - Don't log anything
+   1 - Log errors
+   2 - Log errors and generic info
+   3 - Log everything (debug)
+   */
+  logType: 2,
   rtmp: {
     port: 1935,
     chunk_size: 60000,
@@ -8,28 +15,23 @@ const config = {
     ping: 30,
     ping_timeout: 60
   },
-  http: {
-    port: 8000,
-    mediaroot: './media',
-    webroot: './www',
-    allow_origin: '*',
-    api: true
-  },
-  https: {
-    port: 8443,
-    key: './privatekey.pem',
-    cert: './certificate.pem',
-  },
   auth: {
-    api: true,
-    api_user: 'admin',
-    api_pass: 'admin',
     play: false,
-    publish: false,
-    secret: 'nodemedia2017privatekey'
+    publish: true,
+    secret: 'theSuperSecretKey'
+  },
+  trans: {
+    ffmpeg: '/usr/local/bin/ffmpeg',
+    mediaroot: '/tmp/pathWhereYouWantTheFiles',
+    tasks: [
+      {
+        app: 'live',
+        mp4: true,
+        mp4Flags: '[movflags=frag_keyframe+empty_moov]',
+      }
+    ]
   }
 };
-
 
 let nms = new NodeMediaServer(config)
 nms.run();
