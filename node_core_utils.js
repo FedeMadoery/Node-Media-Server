@@ -48,6 +48,12 @@ function verifyAuth(signStr, streamId, secretKey) {
   return shv === ohv;
 }
 
+function decodeArg(args) {
+  let buff = Buffer.from(args, 'base64');
+
+  return buff.toString('ascii'); // Decoded Arg
+}
+
 function getFFmpegVersion(ffpath) {
   return new Promise((resolve, reject) => {
     let ffmpeg_exec = spawn(ffpath, ['-version']);
@@ -89,6 +95,7 @@ function getFFmpegUrl() {
 module.exports = {
   generateNewSessionID,
   verifyAuth,
+  decodeArg,
   genRandomName,
   getFFmpegVersion,
   getFFmpegUrl
